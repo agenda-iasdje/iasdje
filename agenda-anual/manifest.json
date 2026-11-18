@@ -1,7 +1,9 @@
 {
   "name": "Agenda Anual IASD Jd. Emília",
   "short_name": "Agenda Anual",
+  "id": "/iasdje/agenda-anual/",
   "start_url": "./",
+  "scope": "./",
   "display": "standalone",
   "background_color": "#ffffff",
   "theme_color": "#1E40AF",

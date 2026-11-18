@@ -1,0 +1,13 @@
+{
+  "name": "Agenda Fácil IASD",
+  "short_name": "Agenda Fácil",
+  "id": "/iasdje/agenda-facil/",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#1E40AF",
+  "icons": [
+    { "src": "icone.png", "sizes": "512x512", "type": "image/png", "purpose": "any" }
+  ]
+}
