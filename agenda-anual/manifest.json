@@ -1,0 +1,11 @@
+{
+  "name": "Agenda Anual IASD Jd. Emília",
+  "short_name": "Agenda Anual",
+  "start_url": "./",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#1E40AF",
+  "icons": [
+    { "src": "https://i.postimg.cc/8k2tST2y/igreja.png", "sizes": "512x512", "type": "image/png", "purpose": "any" }
+  ]
+}
