@@ -24,8 +24,63 @@
 </head>
 <body>
   <!-- ▼▼ COLE AQUI o link do Web App (Implantar > Gerenciar implantações > URL, termina em /exec) ▼▼ -->
-  <iframe src="https://script.google.com/macros/s/AKfycbzB2JfWLQbrd7KQW-ujer_3IsoG8wid6qAvwztkwp0pEdls0chmPb9wvZpIzUURpWy5/exec"
-          allow="clipboard-write; fullscreen; web-share"
+  <iframe id="app" data-src="https://script.google.com/macros/s/AKfycbzB2JfWLQbrd7KQW-ujer_3IsoG8wid6qAvwztkwp0pEdls0chmPb9wvZpIzUURpWy5/exec"
+          allow="clipboard-write; fullscreen"
           title="Agenda Fácil IASD"></iframe>
+  <script>
+    // repassa os parâmetros do link (ex.: ?evento=123) para o app do Apps Script
+    var f = document.getElementById("app");
+    f.src = f.getAttribute("data-src") + (location.search || "");
+  </script>
+
+  <!-- ===== NOTIFICAÇÕES (OneSignal) =====
+       1) Cole o App ID do OneSignal abaixo (OneSignal > Settings > Keys & IDs > OneSignal App ID).
+       2) O arquivo OneSignalSDKWorker.js precisa estar nesta mesma pasta (agenda-facil) no GitHub.
+       O app avisa qual é o departamento salvo e este celular recebe a etiqueta "departamento". -->
+  <script>
+    var ONESIGNAL_APP_ID = "okocmhk3qeg7mp2ilwf3lsywa";
+    var notificacoesLigadas = ONESIGNAL_APP_ID.indexOf("COLE_AQUI") !== 0;
+
+    window.OneSignalDeferred = window.OneSignalDeferred || [];
+    if (notificacoesLigadas) {
+      var s = document.createElement("script");
+      s.src = "https://cdn.onesignal.com/sdks/web/v16/OneSignalSDK.page.js";
+      s.defer = true;
+      document.head.appendChild(s);
+      OneSignalDeferred.push(async function(OneSignal) {
+        await OneSignal.init({
+          appId: ONESIGNAL_APP_ID,
+          serviceWorkerPath: "iasdje/agenda-facil/OneSignalSDKWorker.js",
+          serviceWorkerParam: { scope: "/iasdje/agenda-facil/" },
+          promptOptions: {
+            slidedown: {
+              prompts: [{
+                type: "push",
+                autoPrompt: true,
+                text: {
+                  actionMessage: "Quer receber avisos de escalas pendentes do seu departamento e dos próximos cultos?",
+                  acceptButton: "Quero receber",
+                  cancelButton: "Agora não"
+                },
+                delay: { pageViews: 1, timeDelay: 8 }
+              }]
+            }
+          }
+        });
+      });
+    }
+
+    // O app (dentro do iframe) manda o departamento salvo; marcamos este celular no OneSignal
+    window.addEventListener("message", function(ev) {
+      var d = ev.data || {};
+      if (d.app !== "agendaFacil" || d.tipo !== "departamento" || !notificacoesLigadas) return;
+      var host = "";
+      try { host = new URL(ev.origin).hostname; } catch (e) { return; }
+      if (!/(\.googleusercontent\.com|script\.google\.com)$/.test(host)) return;   // só aceita o app do Apps Script
+      OneSignalDeferred.push(function(OneSignal) {
+        OneSignal.User.addTag("departamento", d.valor || "ALL");
+      });
+    });
+  </script>
 </body>
 </html>
